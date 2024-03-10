@@ -48,8 +48,8 @@ public class Room {
     public void setAvailable(boolean available) {
         this.available = available;
         if (this.available){
-            setDateFrom(null);
-            setDateTo(null);
+            this.setDateFrom(null);
+            this.setDateTo(null);
         }
     }
 
