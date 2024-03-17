@@ -1,3 +1,7 @@
+package Model;
+
+import Model.Room;
+
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
@@ -6,9 +10,13 @@ import java.util.Random;
 public class Hotel {
     private List<Room> rooms;
 
-    public Hotel() {
+    private Hotel() {
         rooms = new LinkedList<>();
         generateRooms();
+    }
+
+    public static Hotel getInstance(){
+        return new Hotel();
     }
 
     private void generateRooms() {
@@ -36,7 +44,7 @@ public class Hotel {
         for (int i = 0; i < rooms.size(); i++) {
             r = rooms.get(i);
             if (r.isAvailable() || (r.getDateFrom().compareTo(date) > 0 || r.getDateTo().compareTo(date) < 0)) {
-                System.out.println("Room " + r.getNumber() + " is available at " + date);
+                System.out.println("Model.Room " + r.getNumber() + " is available at " + date);
             }
         }
     }

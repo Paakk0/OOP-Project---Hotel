@@ -1,7 +1,9 @@
+package Model;
+
 import java.time.LocalDate;
 
 public class Room {
-    private int number,numberOfBeds,numberOfGuests;
+    private int number, numberOfBeds, numberOfGuests;
     private boolean available;
     private LocalDate dateFrom, dateTo;
     private String note;
@@ -15,7 +17,6 @@ public class Room {
         this.dateTo = to;
         this.note = note;
     }
-
 
     public int getNumber() {
         return number;
@@ -47,10 +48,6 @@ public class Room {
 
     public void setAvailable(boolean available) {
         this.available = available;
-        if (this.available){
-            this.setDateFrom(null);
-            this.setDateTo(null);
-        }
     }
 
     public LocalDate getDateFrom() {
