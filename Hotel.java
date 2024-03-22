@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Hotel {
+    private static Hotel hotel;
     private List<Room> rooms;
 
     private Hotel() {
@@ -15,8 +16,11 @@ public class Hotel {
         generateRooms();
     }
 
-    public static Hotel getInstance(){
-        return new Hotel();
+    public static Hotel getInstance() {
+        if (hotel == null) {
+            return new Hotel();
+        }
+        return hotel;
     }
 
     private void generateRooms() {
@@ -32,8 +36,8 @@ public class Hotel {
         }
     }
 
-    public void unavailable(int room,LocalDate dateFrom,LocalDate dateTo,String note){
-        checkIn(room,dateFrom,dateTo,note,0);
+    public void unavailable(int room, LocalDate dateFrom, LocalDate dateTo, String note) {
+        checkIn(room, dateFrom, dateTo, note, 0);
     }
 
     public void availability(LocalDate date) {//DONE
