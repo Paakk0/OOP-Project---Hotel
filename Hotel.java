@@ -9,21 +9,13 @@ import java.util.Random;
 
 public class Hotel {
     private static Hotel hotel;
-    private List<Room> rooms;
+    private static List<Room> rooms;
 
-    private Hotel() {
+    public Hotel() {
         rooms = new LinkedList<>();
-        generateRooms();
     }
 
-    public static Hotel getInstance() {
-        if (hotel == null) {
-            return new Hotel();
-        }
-        return hotel;
-    }
-
-    private void generateRooms() {
+    public static void generateRooms() {
         Random random = new Random();
         for (int i = 1; i <= 400; i = i + 100) {
             for (int j = 0; j <= 30; j++) {
@@ -40,7 +32,7 @@ public class Hotel {
         checkIn(room, dateFrom, dateTo, note, 0);
     }
 
-    public void availability(LocalDate date) {//DONE
+    public void availability(LocalDate date) {
         if (date == null) {
             date = LocalDate.now();
         }
@@ -82,11 +74,11 @@ public class Hotel {
         return null;
     }
 
-    public List<Room> getRooms() {
+    public static List<Room> getRooms() {
         return rooms;
     }
 
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
+    public static void setRooms(List<Room> rooms) {
+        rooms = rooms;
     }
 }
