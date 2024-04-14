@@ -28,11 +28,11 @@ public class Hotel {
         }
     }
 
-    public void unavailable(int room, LocalDate dateFrom, LocalDate dateTo, String note) {
+    public static void unavailable(int room, LocalDate dateFrom, LocalDate dateTo, String note) {
         checkIn(room, dateFrom, dateTo, note, 0);
     }
 
-    public void availability(LocalDate date) {
+    public static void availability(LocalDate date) {
         if (date == null) {
             date = LocalDate.now();
         }
@@ -40,12 +40,25 @@ public class Hotel {
         for (int i = 0; i < rooms.size(); i++) {
             r = rooms.get(i);
             if (r.isAvailable() || (r.getDateFrom().compareTo(date) > 0 || r.getDateTo().compareTo(date) < 0)) {
-                System.out.println("Model.Room " + r.getNumber() + " is available at " + date);
+                System.out.println("Room " + r.getNumber() + " is available at " + date);
             }
         }
     }
 
-    public void checkIn(int number, LocalDate dateFrom, LocalDate dateTo, String note, Integer guests) {//DONE
+    public static void report(LocalDate dateFrom, LocalDate dateTo) {
+        if (dateFrom == null || dateTo == null) {
+            System.out.println("Dates cannot be null!");
+        }
+        Room r;
+        for (int i = 0; i < rooms.size(); i++) {
+            r = rooms.get(i);
+            if (r.getDateFrom().compareTo(dateFrom) > 0 || r.getDateTo().compareTo(dateTo) < 0) {
+                System.out.println("Room " + r.getNumber() + " is being used for " + (dateTo.getDayOfYear() - dateFrom.getDayOfYear()));
+            }
+        }
+    }
+
+    public static void checkIn(int number, LocalDate dateFrom, LocalDate dateTo, String note, Integer guests) {
         Room room = findRoom(number);
         if (room.isAvailable()) {
             room.setAvailable(false);
@@ -60,11 +73,34 @@ public class Hotel {
         }
     }
 
-    public void checkOut(int number) {//DONE
+    public static int find(int beds, LocalDate dateFrom, LocalDate dateTo) {
+        Room r;
+        int count = 0;
+        for (int i = 0; i < rooms.size(); i++) {
+            r = rooms.get(i);
+            if (r.getNumberOfBeds() >= beds && r.isAvailable() || (r.getDateFrom().compareTo(dateFrom) >= 0 || r.getDateTo().compareTo(dateTo) <= 0)) {
+                System.out.println("Room number " + r.getNumber() + " is available!");
+                count++;
+            }
+        }
+        System.out.println(count + " are available at that time!");
+        return count;
+    }
+
+    public static int findNow(int beds, LocalDate dateFrom, LocalDate dateTo) {
+        int count = find(beds, dateFrom, dateTo);
+        if (count > 0)
+            return count;
+        else {
+
+        }
+    }
+
+    public static void checkOut(int number) {//DONE
         findRoom(number).setAvailable(true);
     }
 
-    public Room findRoom(int number) {
+    public static Room findRoom(int number) {
 
         for (int i = 0; i < rooms.size(); i++) {
             if (rooms.get(i).getNumber() == number) {

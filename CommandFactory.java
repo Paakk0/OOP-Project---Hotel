@@ -20,6 +20,14 @@ public class CommandFactory {
         commandMap.put("close", args -> new CloseCommand());
         commandMap.put("save", args -> new SaveCommand());
         commandMap.put("saveas", args -> new SaveAsCommand());
+        //
+        commandMap.put("checkin",args -> new CheckInCommand());
+        commandMap.put("availability",args -> new AvailabilityCommand());
+        commandMap.put("checkout",args -> new CheckOutCommand());
+        commandMap.put("report",args -> new ReportCommand());
+        commandMap.put("find",args -> new FindCommand());
+        commandMap.put("find!",args -> new FindNowCommand());
+        commandMap.put("unavailable",args -> new UnavailableCommand());
     }
 
     public static void executeCommand(String input) {

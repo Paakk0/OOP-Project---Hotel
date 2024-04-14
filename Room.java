@@ -48,6 +48,10 @@ public class Room {
 
     public void setAvailable(boolean available) {
         this.available = available;
+        if (this.available) {
+            this.dateFrom = null;
+            this.dateTo = null;
+        }
     }
 
     public LocalDate getDateFrom() {
