@@ -22,7 +22,7 @@ public class HelpCommand extends Command {
                             "find! <beds> <from> <to>                   \tShows room for important guest, if hotel is full some guests are offered room swap\n" +
                             "availability <date>                        \tShows which rooms are available on that date\n" +
                             "unavailable <room> <from> <to> <note>      \tRoom becomes temporarily unavailable\n" +
-                            "report <from> <to>                         \tShows how many days the rooms from a period have been used\n");
+                            "report <from> <to>                         \tShows how many days the rooms have been used in a period of time\n");
         } else System.out.println("This command requires no arguments!");
     }
 }

@@ -1,11 +1,8 @@
 package Model;
 
-import Model.Room;
-
+import java.text.ParseException;
 import java.time.LocalDate;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Hotel {
     private static Hotel hotel;
@@ -23,7 +20,7 @@ public class Hotel {
                     j = 1;
                     i = 0;
                 }
-                rooms.add(new Room(i + j, random.nextInt(1, 4), 0, true, null, null, null));
+                rooms.add(new Room(i + j, random.nextInt(1, 6), 0, true, null, null, null));
             }
         }
     }
@@ -39,7 +36,7 @@ public class Hotel {
         Room r;
         for (int i = 0; i < rooms.size(); i++) {
             r = rooms.get(i);
-            if (r.isAvailable() || (r.getDateFrom().compareTo(date) > 0 || r.getDateTo().compareTo(date) < 0)) {
+            if (r.isAvailable() || (r.getDateFrom().compareTo(date) >= 1 || r.getDateTo().compareTo(date) <= -1)) {
                 System.out.println("Room " + r.getNumber() + " is available at " + date);
             }
         }
@@ -52,69 +49,142 @@ public class Hotel {
         Room r;
         for (int i = 0; i < rooms.size(); i++) {
             r = rooms.get(i);
-            if (r.getDateFrom().compareTo(dateFrom) > 0 || r.getDateTo().compareTo(dateTo) < 0) {
-                System.out.println("Room " + r.getNumber() + " is being used for " + (dateTo.getDayOfYear() - dateFrom.getDayOfYear()));
+            if (r.getDateFrom() != null && r.getDateTo() != null &&
+                    (dateFrom.compareTo(r.getDateFrom()) >= 0 || dateTo.compareTo(r.getDateTo()) <= 0)) {
+                System.out.println("Room " + r.getNumber() + " is being used for " + r.getDateTo().compareTo(r.getDateFrom()));
+                return;
             }
         }
+        System.out.println("No data of room use at that period!");
     }
 
     public static void checkIn(int number, LocalDate dateFrom, LocalDate dateTo, String note, Integer guests) {
-        Room room = findRoom(number);
-        if (room.isAvailable()) {
-            room.setAvailable(false);
-            room.setDateFrom(dateFrom);
-            room.setDateTo(dateTo);
-            room.setNote(note);
-            if (guests == null) {
-                room.setNumberOfGuests(room.getNumberOfBeds());
-            } else room.setNumberOfGuests(guests);
+        int index = findRoom(number);
+        if (index != -1 && rooms.get(index).isAvailable()) {
+            if (rooms.get(index).getNumberOfBeds() >= guests) {
+                rooms.get(index).setAvailable(false);
+                rooms.get(index).setDateFrom(dateFrom);
+                rooms.get(index).setDateTo(dateTo);
+                rooms.get(index).setNote(note);
+                if (guests == 0) {
+                    rooms.get(index).setNumberOfGuests(rooms.get(index).getNumberOfBeds());
+                } else rooms.get(index).setNumberOfGuests(guests);
+                System.out.println("Room " + rooms.get(index).getNumber() + " has been checked in!");
+            } else {
+                System.out.println("This room only has " + rooms.get(index).getNumberOfBeds());
+            }
         } else {
-            System.out.println("This rooms is currently unavailable!");
+            System.out.println("This rooms is unavailable!");
         }
     }
 
-    public static int find(int beds, LocalDate dateFrom, LocalDate dateTo) {
-        Room r;
-        int count = 0;
+    private static int findRoom(int number) {
+
         for (int i = 0; i < rooms.size(); i++) {
-            r = rooms.get(i);
-            if (r.getNumberOfBeds() >= beds && r.isAvailable() || (r.getDateFrom().compareTo(dateFrom) >= 0 || r.getDateTo().compareTo(dateTo) <= 0)) {
-                System.out.println("Room number " + r.getNumber() + " is available!");
-                count++;
+            if (rooms.get(i).getNumber() == number) {
+                return i;
             }
         }
-        System.out.println(count + " are available at that time!");
-        return count;
+        System.out.println("There is no such room!");
+        return -1;
+    }
+
+    public static int find(int beds, LocalDate dateFrom, LocalDate dateTo) {
+        if (beds >= 1 && beds <= 5) {
+            Room r;
+            int count = 0;
+            for (int i = 0; i < getRooms().size(); i++) {
+                r = getRooms().get(i);
+                if ((r.getNumberOfBeds() >= beds) && (r.isAvailable() || (dateFrom.isAfter(r.getDateTo()) || dateTo.isBefore(r.getDateFrom())) && (dateFrom != r.getDateFrom() && dateTo != r.getDateTo()))) {
+                    System.out.println("Room number " + r.getNumber() + " is available!");
+                    count++;
+                }
+
+            }
+            return count;
+        }
+        System.out.println("The hotel contains rooms with 1-5 beds!");
+        return -1;
     }
 
     public static int findNow(int beds, LocalDate dateFrom, LocalDate dateTo) {
         int count = find(beds, dateFrom, dateTo);
         if (count > 0)
             return count;
-        else {
-
+        else if (count != -1) {
+            List<Room> potentialRooms = new LinkedList<>();
+            Room r;
+            for (int i = 0; i < rooms.size(); i++) {
+                r = rooms.get(i);
+                if (r.getNumberOfBeds() > r.getNumberOfGuests()) {
+                    potentialRooms.add(r);
+                }
+            }
+            return roomSwitchAdvisor(potentialRooms, beds);
         }
+        return -1;
     }
 
-    public static void checkOut(int number) {//DONE
-        findRoom(number).setAvailable(true);
-    }
-
-    public static Room findRoom(int number) {
-
-        for (int i = 0; i < rooms.size(); i++) {
-            if (rooms.get(i).getNumber() == number) {
-                return rooms.get(i);
+    private static int roomSwitchAdvisor(List<Room> temp, int beds) {
+        Integer[][][] indexLink = new Integer[temp.size()][rooms.size()][2];
+        int m, n, counter;
+        for (int i = 0; i < indexLink.length; i++) {
+            m = findRoom(temp.get(i).getNumber());
+            counter = 0;
+            for (int j = 0; j < rooms.size(); j++) {
+                n = j;
+                if (rooms.get(m).getNumber() != rooms.get(n).getNumber() &&
+                        (rooms.get(m).getNumberOfBeds() - rooms.get(m).getNumberOfGuests()) >= rooms.get(n).getNumberOfGuests() &&
+                        rooms.get(n).getNumberOfBeds() >= beds) {
+                    indexLink[i][counter][0] = m;
+                    indexLink[i][counter][1] = n;
+                    counter++;
+                }
             }
         }
-        return null;
+        System.out.println(indexLink[0][0][1]);
+        if (indexLink.length != 0) {
+            for (int i = 0; i < indexLink.length; i++) {
+                for (int k = 0; k < indexLink[i].length; k++) {
+                    if (indexLink[i][k][0] != null) {
+                        System.out.println("Room " + rooms.get(indexLink[i][k][0]).getNumber() + " (" + rooms.get(indexLink[i][k][0]).getNumberOfGuests() + " | " + rooms.get(indexLink[i][k][0]).getNumberOfBeds() + " guests) <- Room " + rooms.get(indexLink[i][k][1]).getNumber() + " (" + rooms.get(indexLink[i][k][1]).getNumberOfGuests() + " | " + rooms.get(indexLink[i][k][1]).getNumberOfBeds() + " guests)");
+                    }
+                }
+            }
+            return indexLink.length;
+        }
+        System.out.println("Hotel is completely full!");
+        return 0;
+    }
+
+    private static int nextEl(Integer[][] arr) {
+        int i;
+        for (i = 0; i < arr.length; i++) {
+            if (arr[i][0] == null) {
+                break;
+            }
+            ;
+        }
+        return i;
+    }
+
+    public static int checkOut(int number) {
+        int index = findRoom(number);
+        if (index != -1) {
+            if (!rooms.get(index).isAvailable()) {
+                rooms.get(index).setAvailable(true);
+                return rooms.get(index).getNumber();
+            }
+            return -2;
+        }
+        return -1;
     }
 
     public static List<Room> getRooms() {
         return rooms;
     }
 
-    public static void setRooms(List<Room> rooms) {
-        rooms = rooms;
+    public static void setRooms(List<Room> rs) {
+        rooms = rs;
     }
 }

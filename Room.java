@@ -51,6 +51,8 @@ public class Room {
         if (this.available) {
             this.dateFrom = null;
             this.dateTo = null;
+            this.numberOfGuests = 0;
+            this.note = null;
         }
     }
 

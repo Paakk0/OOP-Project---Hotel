@@ -10,6 +10,6 @@ public class SaveCommand extends Command {
         if (args.size() == 0) {
             FileManager.save();
         }
-        else System.out.println();
+        else System.out.println("This command does not require any arguments!");
     }
 }

@@ -11,7 +11,7 @@ public class FileManager {
         if (!file.exists()) {
             try {
                 file = new File(fileName);
-                System.out.println("Creating file " + fileName+"..");
+                System.out.println("Creating file " + fileName + "..");
                 file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -43,14 +43,17 @@ public class FileManager {
     }
 
     public static void save() {
-        try {
-            FileWriter writer = new FileWriter(getFile());
-            writer.write(DataHandler.saveData());
-            writer.close();
-            System.out.println("Hotel data succefuly saved!");
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (file != null) {
+            try {
+                FileWriter writer = new FileWriter(getFile());
+                writer.write(DataHandler.saveData());
+                writer.close();
+                System.out.println("Hotel data succefuly saved!");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        else System.out.println("There is no opened file to save!");
     }
 
     public static File getFile() {

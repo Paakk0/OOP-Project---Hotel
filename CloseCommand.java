@@ -2,6 +2,7 @@ package Commands;
 
 import Files.FileManager;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class CloseCommand extends Command {
@@ -10,6 +11,8 @@ public class CloseCommand extends Command {
         if (args.size() == 0) {
             if (FileManager.closeFile()) {
                 System.out.println("File succefuly closed!");
+                args.add("!");
+                new CheckOutCommand().Command(args);
             } else {
                 System.out.println("No opened file..");
             }
