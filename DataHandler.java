@@ -9,8 +9,16 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Handles data serialization and deserialization for the hotel rooms.
+ */
 public class DataHandler {
 
+    /**
+     * Converts the current state of the hotel rooms to an XML format.
+     *
+     * @return The XML representation of the hotel rooms.
+     */
     public static String saveData() {
         String result = "<Hotel>\n";
         for (int i = 0; i < Hotel.getRooms().size(); i++) {
@@ -30,6 +38,9 @@ public class DataHandler {
         return result;
     }
 
+    /**
+     * Loads data from an XML file and updates the hotel rooms accordingly.
+     */
     public static void loadData() {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(FileManager.getFile()));
@@ -46,6 +57,11 @@ public class DataHandler {
         }
     }
 
+    /**
+     * Converts XML data to hotel room objects and updates the state of the hotel.
+     *
+     * @param data The XML data representing the hotel rooms.
+     */
     private static void convert(String data) {
         List<String> contents = List.of(data.split("</Room>"));
         List<Room> newHotel = Hotel.getRooms();

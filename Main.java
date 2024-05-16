@@ -1,28 +1,29 @@
 import Commands.CommandFactory;
 import Model.Hotel;
 
-import java.time.LocalDate;
 import java.util.Scanner;
 
+/**
+ * The main class that initializes the hotel management system and handles user interaction.
+ */
 public class Main {
+    /**
+     * The main entry point of the hotel management system.
+     *
+     * @param args The command-line arguments (not used).
+     */
     public static void main(String[] args) {
+        // Initialize the hotel and generate rooms
         Hotel hotel = new Hotel();
-        hotel.generateRooms();
+        Hotel.generateRooms();
+
+        // Create a scanner to read user input
         Scanner scanner = new Scanner(System.in);
+
+        // Enter an infinite loop to continuously accept user input
         while (true) {
+            // Execute the user-entered command
             CommandFactory.executeCommand(scanner.nextLine());
         }
     }
-
-    static void fillRooms(Hotel hotel, int number) {
-        for (int i = 0; i < hotel.getRooms().size(); i++) {
-            if (hotel.getRooms().get(i).getNumber() != number) {
-                hotel.checkIn(hotel.getRooms().get(i).getNumber(), LocalDate.of(2000, 1, 1), LocalDate.of(2000, 12, 30), "Somenote", null);
-            }
-        }
-    }
 }
-
-//checkin 429 2012-04-22 2012-04-24 business 3
-//find 3 2012-04-22 2012-04-24
-//find! 2 2012-04-22 2012-04-24

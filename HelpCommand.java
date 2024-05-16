@@ -2,11 +2,20 @@ package Commands;
 
 import java.util.List;
 
+/**
+ * Represents a command to display information about available commands.
+ */
 public class HelpCommand extends Command {
 
+    /**
+     * Executes the command to display information about available commands.
+     *
+     * @param args List of arguments passed to the command. No arguments are expected for this command.
+     */
     @Override
     public void Command(List<String> args) {
         if (args.size() == 0) {
+            // Print command information
             System.out.println(
                     "The following commands are supported:\n" +
                             "open <file>    \topens <file>\n" +
@@ -27,6 +36,8 @@ public class HelpCommand extends Command {
                             "unroll <room> <event>                      \tUnrolls room from an event\n" +
                             "showEvents                                 \tprints all possible events\n" +
                             "printEnrolledRooms <event>                 \tprints all rooms that have enrolled in a specific event\n");
-        } else System.out.println("This command requires no arguments!");
+        } else {
+            System.out.println("This command requires no arguments!");
+        }
     }
 }
