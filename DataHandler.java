@@ -83,31 +83,67 @@ public class DataHandler {
         Hotel.setRooms(newHotel);
     }
 
+    /**
+     * Extracts the index of a room from the XML data.
+     *
+     * @param xmlData The XML data containing room information.
+     * @return The index of the room.
+     */
     private static int extractIndex(String xmlData) {
         String indexStr = xmlData.substring(xmlData.indexOf("index='") + 7, xmlData.indexOf("'>"));
         return Integer.parseInt(indexStr);
     }
 
+    /**
+     * Extracts the room number from the XML data.
+     *
+     * @param xmlData The XML data containing room information.
+     * @return The room number.
+     */
     private static int extractNumber(String xmlData) {
         String numberStr = xmlData.substring(xmlData.indexOf("<Number>") + 8, xmlData.indexOf("</Number>"));
         return Integer.parseInt(numberStr);
     }
 
+    /**
+     * Extracts the availability status of a room from the XML data.
+     *
+     * @param xmlData The XML data containing room information.
+     * @return The availability status of the room.
+     */
     private static boolean extractAvailable(String xmlData) {
         String availableStr = xmlData.substring(xmlData.indexOf("<Available>") + 11, xmlData.indexOf("</Available>"));
         return Boolean.parseBoolean(availableStr);
     }
 
+    /**
+     * Extracts the number of beds in a room from the XML data.
+     *
+     * @param xmlData The XML data containing room information.
+     * @return The number of beds in the room.
+     */
     private static int extractNumberOfBeds(String xmlData) {
         String bedsStr = xmlData.substring(xmlData.indexOf("<NumberOfBeds>") + 14, xmlData.indexOf("</NumberOfBeds>"));
         return Integer.parseInt(bedsStr);
     }
 
+    /**
+     * Extracts the number of guests in a room from the XML data.
+     *
+     * @param xmlData The XML data containing room information.
+     * @return The number of guests in the room.
+     */
     private static int extractNumberOfGuests(String xmlData) {
         String guestsStr = xmlData.substring(xmlData.indexOf("<NumberOfGuests>") + 16, xmlData.indexOf("</NumberOfGuests>"));
         return Integer.parseInt(guestsStr);
     }
 
+    /**
+     * Extracts the check-in date of a room from the XML data.
+     *
+     * @param xmlData The XML data containing room information.
+     * @return The check-in date of the room.
+     */
     private static LocalDate extractDateFrom(String xmlData) {
         String dateFromStr = xmlData.substring(xmlData.indexOf("<DateFrom>") + 10, xmlData.indexOf("</DateFrom>"));
         if ("null".equals(dateFromStr)) {
@@ -117,6 +153,12 @@ public class DataHandler {
         }
     }
 
+    /**
+     * Extracts the check-out date of a room from the XML data.
+     *
+     * @param xmlData The XML data containing room information.
+     * @return The check-out date of the room.
+     */
     private static LocalDate extractDateTo(String xmlData) {
         String dateToString = xmlData.substring(xmlData.indexOf("<DateTo>") + 8, xmlData.indexOf("</DateTo>"));
         if ("null".equals(dateToString)) {
@@ -126,6 +168,12 @@ public class DataHandler {
         }
     }
 
+    /**
+     * Extracts the note associated with a room from the XML data.
+     *
+     * @param xmlData The XML data containing room information.
+     * @return The note associated with the room.
+     */
     private static String extractNote(String xmlData) {
         return xmlData.substring(xmlData.indexOf("<Note>") + 6, xmlData.indexOf("</Note>"));
     }
