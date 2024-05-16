@@ -28,6 +28,10 @@ public class CommandFactory {
         commandMap.put("find",args -> new FindCommand());
         commandMap.put("find!",args -> new FindNowCommand());
         commandMap.put("unavailable",args -> new UnavailableCommand());
+        commandMap.put("enroll",args->new EnrollCommand());
+        commandMap.put("unroll",args->new UnrollCommand());
+        commandMap.put("showEvents",args->new ShowEventsCommand());
+        commandMap.put("printEnrolledRooms",args->new PrintEnrolledRoomsCommand());
     }
 
     public static void executeCommand(String input) {

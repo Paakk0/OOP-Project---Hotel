@@ -1,12 +1,19 @@
 package Model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Room {
     private int number, numberOfBeds, numberOfGuests;
     private boolean available;
     private LocalDate dateFrom, dateTo;
     private String note;
+    private List<Event> events;
+
+    public List<Event> getEvents() {
+        return events;
+    }
 
     public Room(int number, int numberOfBeds, int numberOfGuests, boolean available, LocalDate dateFrom, LocalDate to, String note) {
         this.number = number;
@@ -16,6 +23,15 @@ public class Room {
         this.dateFrom = dateFrom;
         this.dateTo = to;
         this.note = note;
+        this.events = new ArrayList<>();
+    }
+
+    public void addEvent(Event e){
+        events.add(e);
+    }
+
+    public void removeEvent(Event e){
+        events.remove(e);
     }
 
     public int getNumber() {

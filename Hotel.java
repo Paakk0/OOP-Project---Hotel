@@ -78,7 +78,7 @@ public class Hotel {
         }
     }
 
-    private static int findRoom(int number) {
+    public static int findRoom(int number) {
 
         for (int i = 0; i < rooms.size(); i++) {
             if (rooms.get(i).getNumber() == number) {
