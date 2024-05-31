@@ -1,43 +1,36 @@
 package Commands;
 
+import UI.ColorCode;
+
 import java.util.List;
 
-/**
- * Represents a command to display information about available commands.
- */
 public class HelpCommand extends Command {
-
-    /**
-     * Executes the command to display information about available commands.
-     *
-     * @param args List of arguments passed to the command. No arguments are expected for this command.
-     */
     @Override
     public void Command(List<String> args) {
         if (args.size() == 0) {
             // Print command information
-            System.out.println(
+            System.out.println(ColorCode.SUGGEST.getCode() +
                     "The following commands are supported:\n" +
-                            "open <file>    \topens <file>\n" +
-                            "close          \tcloses currently opened file\n" +
-                            "save           \tsaves the currently open file\n" +
-                            "saveas <file>  \tsaves the currently open file in <file>\n" +
-                            "help           \tprints this information\n" +
-                            "exit           \texists the program\n" +
-                            "\n" +
-                            "checkin <room> <from> <to> <note> <guests> \tRoom becomes unavailable for specified duration\n" +
-                            "checkout <room>                            \tRoom becomes available\n" +
-                            "find <beds> <from> <to>                    \tShows which rooms are available at chosen period with more or equal beds\n" +
-                            "find! <beds> <from> <to>                   \tShows room for important guest, if hotel is full some guests are offered room swap\n" +
-                            "availability <date>                        \tShows which rooms are available on that date\n" +
-                            "unavailable <room> <from> <to> <note>      \tRoom becomes temporarily unavailable\n" +
-                            "report <from> <to>                         \tShows how many days the rooms have been used in a period of time\n" +
-                            "enroll <room> <event>                      \tEnrolls room in an event\n" +
-                            "unroll <room> <event>                      \tUnrolls room from an event\n" +
-                            "showEvents                                 \tprints all possible events\n" +
-                            "printEnrolledRooms <event>                 \tprints all rooms that have enrolled in a specific event\n");
+                    "open <file>    \topens <file>\n" +
+                    "close          \tcloses currently opened file\n" +
+                    "save           \tsaves the currently open file\n" +
+                    "saveas <file>  \tsaves the currently open file in <file>\n" +
+                    "help           \tprints this information\n" +
+                    "exit           \texists the program\n" +
+                    "\n" +
+                    "checkin <room> <from> <to> <note> <guests> \tRoom becomes unavailable for specified duration\n" +
+                    "checkout <room> [<numberOfReservation>]    \tRoom becomes available\n" +
+                    "find <beds> <from> <to>                    \tShows which rooms are available at chosen period with more or equal beds\n" +
+                    "find! <beds> <from> <to>                   \tShows room for important guest, if hotel is full some guests are offered room swap\n" +
+                    "availability <date>                        \tShows which rooms are available on that date\n" +
+                    "unavailable <room> <from> <to> <note>      \tRoom becomes temporarily unavailable\n" +
+                    "report <from> <to>                         \tShows how many days the rooms have been used in a period of time\n" +
+                    "enroll <room> <event>                      \tEnrolls room in an event\n" +
+                    "unroll <room> <event>                      \tUnrolls room from an event\n" +
+                    "showEvents                                 \tprints all possible events\n" +
+                    "printEnrolledRooms <event>                 \tprints all rooms that have enrolled in a specific event\n");
         } else {
-            System.out.println("This command requires no arguments!");
+            System.out.println(ColorCode.ERROR.getCode() + "This command requires no arguments!");
         }
     }
 }

@@ -1,151 +1,108 @@
 package Files;
 
+import Model.Event;
 import Model.Hotel;
+import Model.Reservation;
 import Model.Room;
+import Model.Guest;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Handles data serialization and deserialization for the hotel rooms.
- */
 public class DataHandler {
 
-    /**
-     * Converts the current state of the hotel rooms to an XML format.
-     *
-     * @return The XML representation of the hotel rooms.
-     */
     public static String saveData() {
-        String result = "<Hotel>\n";
-        for (int i = 0; i < Hotel.getRooms().size(); i++) {
-            Room r = Hotel.getRooms().get(i);
-            result += "" +
-                    "\t<Room index='" + i + "'>\n" +
-                    "\t\t<Number>" + r.getNumber() + "</Number>\n" +
-                    "\t\t<Available>" + r.isAvailable() + "</Available>\n" +
-                    "\t\t<NumberOfBeds>" + r.getNumberOfBeds() + "</NumberOfBeds>\n" +
-                    "\t\t<NumberOfGuests>" + r.getNumberOfGuests() + "</NumberOfGuests>\n" +
-                    "\t\t<DateFrom>" + r.getDateFrom() + "</DateFrom>\n" +
-                    "\t\t<DateTo>" + r.getDateTo() + "</DateTo>\n" +
-                    "\t\t<Note>" + r.getNote() + "</Note>\n" +
-                    "\t</Room>\n";
-        }
-        result += "</Hotel>";
-        return result;
+        return XmlStructure.createXmlStructure();
     }
 
-    /**
-     * Loads data from an XML file and updates the hotel rooms accordingly.
-     */
     public static void loadData() {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(FileManager.getFile()));
-            String line;
-            StringBuilder xmlData = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                xmlData.append(line);
-            }
-            reader.close();
-            convert(xmlData.toString());
-
+            convert(XmlStructure.fetchXmlData());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Converts XML data to hotel room objects and updates the state of the hotel.
-     *
-     * @param data The XML data representing the hotel rooms.
-     */
     private static void convert(String data) {
-        List<String> contents = List.of(data.split("</Room>"));
+        List<String> contents = List.of(data.split("</" + XmlStructure.ROOM.getValue() + ">"));
         List<Room> newHotel = Hotel.getRooms();
         Room r;
         String line;
         for (int i = 0; i < contents.size() - 1; i++) {
             line = contents.get(i);
-            if (extractIndex(line) == i) {
+            if (extractNumber(line) == Hotel.getRooms().get(i).getNumber()) {
                 r = newHotel.get(i);
                 r.setNumber(extractNumber(line));
-                r.setAvailable(extractAvailable(line));
                 r.setNumberOfBeds(extractNumberOfBeds(line));
-                r.setNumberOfGuests(extractNumberOfGuests(line));
-                r.setDateFrom(extractDateFrom(line));
-                r.setDateTo(extractDateTo(line));
                 r.setNote(extractNote(line));
+                r.setEvents(extractEvents(line));
+                r.setReservations(extractReservations(line));
             }
         }
         Hotel.setRooms(newHotel);
     }
 
-    /**
-     * Extracts the index of a room from the XML data.
-     *
-     * @param xmlData The XML data containing room information.
-     * @return The index of the room.
-     */
-    private static int extractIndex(String xmlData) {
-        String indexStr = xmlData.substring(xmlData.indexOf("index='") + 7, xmlData.indexOf("'>"));
-        return Integer.parseInt(indexStr);
-    }
-
-    /**
-     * Extracts the room number from the XML data.
-     *
-     * @param xmlData The XML data containing room information.
-     * @return The room number.
-     */
     private static int extractNumber(String xmlData) {
-        String numberStr = xmlData.substring(xmlData.indexOf("<Number>") + 8, xmlData.indexOf("</Number>"));
+        String numberStr = xmlData.substring(xmlData.indexOf(XmlStructure.ROOM.getValue() + " " + XmlStructure.NUMBER.getValue() + "=\"") + XmlStructure.ROOM.getValue().length() + XmlStructure.NUMBER.getValue().length() + 3, xmlData.indexOf("\">"));
         return Integer.parseInt(numberStr);
     }
 
-    /**
-     * Extracts the availability status of a room from the XML data.
-     *
-     * @param xmlData The XML data containing room information.
-     * @return The availability status of the room.
-     */
-    private static boolean extractAvailable(String xmlData) {
-        String availableStr = xmlData.substring(xmlData.indexOf("<Available>") + 11, xmlData.indexOf("</Available>"));
-        return Boolean.parseBoolean(availableStr);
-    }
-
-    /**
-     * Extracts the number of beds in a room from the XML data.
-     *
-     * @param xmlData The XML data containing room information.
-     * @return The number of beds in the room.
-     */
     private static int extractNumberOfBeds(String xmlData) {
-        String bedsStr = xmlData.substring(xmlData.indexOf("<NumberOfBeds>") + 14, xmlData.indexOf("</NumberOfBeds>"));
+        String bedsStr = xmlData.substring(xmlData.indexOf("<" + XmlStructure.NUMBEROFBEDS.getValue() + ">") + XmlStructure.NUMBEROFBEDS.getValue().length() + 2, xmlData.indexOf("</" + XmlStructure.NUMBEROFBEDS.getValue() + ">"));
         return Integer.parseInt(bedsStr);
     }
 
-    /**
-     * Extracts the number of guests in a room from the XML data.
-     *
-     * @param xmlData The XML data containing room information.
-     * @return The number of guests in the room.
-     */
-    private static int extractNumberOfGuests(String xmlData) {
-        String guestsStr = xmlData.substring(xmlData.indexOf("<NumberOfGuests>") + 16, xmlData.indexOf("</NumberOfGuests>"));
-        return Integer.parseInt(guestsStr);
+    private static String extractNote(String xmlData) {
+        return xmlData.substring(xmlData.indexOf("<" + XmlStructure.NOTE.getValue() + ">") + XmlStructure.NOTE.getValue().length() + 2, xmlData.indexOf("</" + XmlStructure.NOTE.getValue() + ">"));
     }
 
-    /**
-     * Extracts the check-in date of a room from the XML data.
-     *
-     * @param xmlData The XML data containing room information.
-     * @return The check-in date of the room.
-     */
+    private static List<Event> extractEvents(String xmlData) {
+        List<Event> events = new ArrayList<>();
+        if (xmlData.contains("<" + XmlStructure.EVENTS.getValue() + ">")) {
+            String eventsStr = xmlData.substring(xmlData.indexOf("<" + XmlStructure.EVENTS.getValue() + ">") + XmlStructure.EVENTS.getValue().length() + 2, xmlData.indexOf("</" + XmlStructure.EVENTS.getValue() + ">"));
+            String[] eventStrArray = eventsStr.split("</" + XmlStructure.EVENT.getValue() + ">");
+            for (String eventStr : eventStrArray) {
+                if (eventStr.contains("<" + XmlStructure.EVENT.getValue() + ">")) {
+                    events.add(Event.getEvent(Integer.parseInt(eventStr.substring(eventStr.indexOf("<" + XmlStructure.EVENT.getValue() + ">") + XmlStructure.EVENT.getValue().length() + 2))));
+                }
+            }
+        }
+        return events;
+    }
+
+    private static List<Reservation> extractReservations(String xmlData) {
+        List<Reservation> reservations = new ArrayList<>();
+        if (xmlData.contains("<" + XmlStructure.RESERVATIONS.getValue() + ">")) {
+            String reservationsStr = xmlData.substring(
+                    xmlData.indexOf("<" + XmlStructure.RESERVATIONS.getValue() + ">") + XmlStructure.RESERVATIONS.getValue().length() + 2,
+                    xmlData.indexOf("</" + XmlStructure.RESERVATIONS.getValue() + ">")
+            );
+            String[] reservationStrArray = reservationsStr.split("</" + XmlStructure.RESERVATION.getValue() + ">");
+            for (String reservationStr : reservationStrArray) {
+                if (reservationStr.contains("<" + XmlStructure.DATEFROM.getValue() + ">")) {
+                    LocalDate dateFrom = extractDateFrom(reservationStr);
+                    LocalDate dateTo = extractDateTo(reservationStr);
+                    List<Guest> guests = extractGuests(reservationStr);
+
+                    if (!guests.isEmpty()) {
+                        Guest firstGuest = guests.get(0);
+                        Reservation reservation = new Reservation(dateFrom, dateTo, firstGuest.getIdentity(), firstGuest.getNumber());
+                        for (int i = 1; i < guests.size(); i++) {
+                            reservation.addGuest(guests.get(i));
+                        }
+                        reservations.add(reservation);
+                    }
+                }
+            }
+        }
+        return reservations;
+    }
+
+
     private static LocalDate extractDateFrom(String xmlData) {
-        String dateFromStr = xmlData.substring(xmlData.indexOf("<DateFrom>") + 10, xmlData.indexOf("</DateFrom>"));
+        String dateFromStr = xmlData.substring(xmlData.indexOf("<" + XmlStructure.DATEFROM.getValue() + ">") + XmlStructure.DATEFROM.getValue().length() + 2, xmlData.indexOf("</" + XmlStructure.DATEFROM.getValue() + ">"));
         if ("null".equals(dateFromStr)) {
             return null;
         } else {
@@ -153,28 +110,37 @@ public class DataHandler {
         }
     }
 
-    /**
-     * Extracts the check-out date of a room from the XML data.
-     *
-     * @param xmlData The XML data containing room information.
-     * @return The check-out date of the room.
-     */
     private static LocalDate extractDateTo(String xmlData) {
-        String dateToString = xmlData.substring(xmlData.indexOf("<DateTo>") + 8, xmlData.indexOf("</DateTo>"));
-        if ("null".equals(dateToString)) {
+        String dateToStr = xmlData.substring(xmlData.indexOf("<" + XmlStructure.DATETO.getValue() + ">") + XmlStructure.DATETO.getValue().length() + 2, xmlData.indexOf("</" + XmlStructure.DATETO.getValue() + ">"));
+        if ("null".equals(dateToStr)) {
             return null;
         } else {
-            return LocalDate.parse(dateToString);
+            return LocalDate.parse(dateToStr);
         }
     }
 
-    /**
-     * Extracts the note associated with a room from the XML data.
-     *
-     * @param xmlData The XML data containing room information.
-     * @return The note associated with the room.
-     */
-    private static String extractNote(String xmlData) {
-        return xmlData.substring(xmlData.indexOf("<Note>") + 6, xmlData.indexOf("</Note>"));
+    private static List<Guest> extractGuests(String xmlData) {
+        List<Guest> guests = new ArrayList<>();
+        if (xmlData.contains("<" + XmlStructure.GUESTS.getValue() + ">")) {
+            String guestsStr = xmlData.substring(xmlData.indexOf("<" + XmlStructure.GUESTDETAILS.getValue() + ">") + XmlStructure.GUESTDETAILS.getValue().length() + 2, xmlData.indexOf("</" + XmlStructure.GUESTDETAILS.getValue() + ">"));
+            String[] guestStrArray = guestsStr.split("</" + XmlStructure.GUESTS.getValue() + ">");
+            for (String guestStr : guestStrArray) {
+                if (guestStr.contains("<" + XmlStructure.IDENTITY.getValue() + ">")) {
+                    String identity = extractIdentity(guestStr);
+                    int numberOfGuests = extractNumberOfGuests(guestStr);
+                    guests.add(new Guest(identity, numberOfGuests));
+                }
+            }
+        }
+        return guests;
+    }
+
+    private static String extractIdentity(String xmlData) {
+        return xmlData.substring(xmlData.indexOf("<" + XmlStructure.IDENTITY.getValue() + ">") + XmlStructure.IDENTITY.getValue().length() + 2, xmlData.indexOf("</" + XmlStructure.IDENTITY.getValue() + ">"));
+    }
+
+    private static int extractNumberOfGuests(String xmlData) {
+        String guestsStr = xmlData.substring(xmlData.indexOf("<" + XmlStructure.NUMBEROFGUESTS.getValue() + ">") + XmlStructure.NUMBEROFGUESTS.getValue().length() + 2, xmlData.indexOf("</" + XmlStructure.NUMBEROFGUESTS.getValue() + ">"));
+        return Integer.parseInt(guestsStr);
     }
 }
