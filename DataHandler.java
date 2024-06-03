@@ -37,7 +37,6 @@ public class DataHandler {
                 r.setNumber(extractNumber(line));
                 r.setNumberOfBeds(extractNumberOfBeds(line));
                 r.setNote(extractNote(line));
-                r.setEvents(extractEvents(line));
                 r.setReservations(extractReservations(line));
             }
         }
@@ -58,20 +57,6 @@ public class DataHandler {
         return xmlData.substring(xmlData.indexOf("<" + XmlStructure.NOTE.getValue() + ">") + XmlStructure.NOTE.getValue().length() + 2, xmlData.indexOf("</" + XmlStructure.NOTE.getValue() + ">"));
     }
 
-    private static List<Event> extractEvents(String xmlData) {
-        List<Event> events = new ArrayList<>();
-        if (xmlData.contains("<" + XmlStructure.EVENTS.getValue() + ">")) {
-            String eventsStr = xmlData.substring(xmlData.indexOf("<" + XmlStructure.EVENTS.getValue() + ">") + XmlStructure.EVENTS.getValue().length() + 2, xmlData.indexOf("</" + XmlStructure.EVENTS.getValue() + ">"));
-            String[] eventStrArray = eventsStr.split("</" + XmlStructure.EVENT.getValue() + ">");
-            for (String eventStr : eventStrArray) {
-                if (eventStr.contains("<" + XmlStructure.EVENT.getValue() + ">")) {
-                    events.add(Event.getEvent(Integer.parseInt(eventStr.substring(eventStr.indexOf("<" + XmlStructure.EVENT.getValue() + ">") + XmlStructure.EVENT.getValue().length() + 2))));
-                }
-            }
-        }
-        return events;
-    }
-
     private static List<Reservation> extractReservations(String xmlData) {
         List<Reservation> reservations = new ArrayList<>();
         if (xmlData.contains("<" + XmlStructure.RESERVATIONS.getValue() + ">")) {
@@ -87,8 +72,8 @@ public class DataHandler {
                     List<Guest> guests = extractGuests(reservationStr);
 
                     if (!guests.isEmpty()) {
-                        Guest firstGuest = guests.get(0);
-                        Reservation reservation = new Reservation(dateFrom, dateTo, firstGuest.getIdentity(), firstGuest.getNumber());
+                        Guest guest = guests.get(0);
+                        Reservation reservation = new Reservation(dateFrom, dateTo, guests);
                         for (int i = 1; i < guests.size(); i++) {
                             reservation.addGuest(guests.get(i));
                         }
@@ -128,11 +113,27 @@ public class DataHandler {
                 if (guestStr.contains("<" + XmlStructure.IDENTITY.getValue() + ">")) {
                     String identity = extractIdentity(guestStr);
                     int numberOfGuests = extractNumberOfGuests(guestStr);
-                    guests.add(new Guest(identity, numberOfGuests));
+                    Guest g = new Guest(identity, numberOfGuests);
+                    g.setEvents(extractEvents(guestStr));
+                    guests.add(g);
                 }
             }
         }
         return guests;
+    }
+
+    private static List<Event> extractEvents(String xmlData) {
+        List<Event> events = new ArrayList<>();
+        if (xmlData.contains("<" + XmlStructure.EVENTS.getValue() + ">")) {
+            String eventsStr = xmlData.substring(xmlData.indexOf("<" + XmlStructure.EVENTS.getValue() + ">") + XmlStructure.EVENTS.getValue().length() + 2, xmlData.indexOf("</" + XmlStructure.EVENTS.getValue() + ">"));
+            String[] eventStrArray = eventsStr.split("</" + XmlStructure.EVENT.getValue() + ">");
+            for (String eventStr : eventStrArray) {
+                if (eventStr.contains("<" + XmlStructure.EVENT.getValue() + ">")) {
+                    events.add(Event.getEvent(Integer.parseInt(eventStr.substring(eventStr.indexOf("<" + XmlStructure.EVENT.getValue() + ">") + XmlStructure.EVENT.getValue().length() + 2))));
+                }
+            }
+        }
+        return events;
     }
 
     private static String extractIdentity(String xmlData) {

@@ -50,16 +50,6 @@ public enum XmlStructure {
                     .append(r.getNote())
                     .append("</").append(NOTE.getValue()).append(">\n");
 
-            List<Event> events = r.getEvents();
-            if (!events.isEmpty()) {
-                xml.append("\t\t<").append(EVENTS.getValue()).append(">\n");
-                for (Event e : events) {
-                    xml.append("\t\t\t<").append(EVENT.getValue()).append(">")
-                            .append(e.getId())
-                            .append("</").append(EVENT.getValue()).append(">\n");
-                }
-                xml.append("\t\t</").append(EVENTS.getValue()).append(">\n");
-            }
             List<Reservation> reservations = r.getReservations();
             if (!reservations.isEmpty()) {
                 xml.append("\t\t<").append(RESERVATIONS.getValue()).append(">\n");
@@ -81,14 +71,24 @@ public enum XmlStructure {
                                     .append("</").append(IDENTITY.getValue()).append(">\n")
                                     .append("\t\t\t\t\t\t<").append(NUMBEROFGUESTS.getValue()).append(">")
                                     .append(g.getNumber())
-                                    .append("</").append(NUMBEROFGUESTS.getValue()).append(">\n")
-                                    .append("\t\t\t\t\t</").append(GUESTS.getValue()).append(">\n");
+                                    .append("</").append(NUMBEROFGUESTS.getValue()).append(">\n");
+                            if (!g.getEvents().isEmpty()) {
+                                List<Event> events = g.getEvents();
+                                xml.append("\t\t\t\t\t\t<").append(EVENTS.getValue()).append(">\n");
+                                for (Event e : events) {
+                                    xml.append("\t\t\t\t\t\t\t<").append(EVENT.getValue()).append(">")
+                                            .append(e.getId())
+                                            .append("</").append(EVENT.getValue()).append(">\n");
+                                }
+                                xml.append("\t\t\t\t\t\t</").append(EVENTS.getValue()).append(">\n");
+                            }
+                            xml.append("\t\t\t\t\t</").append(GUESTS.getValue()).append(">\n")
+                                    .append("\t\t\t\t</").append(GUESTDETAILS.getValue()).append(">\n");
                         }
-                        xml.append("\t\t\t\t</").append(GUESTDETAILS.getValue()).append(">\n");
+                        xml.append("\t\t\t</").append(RESERVATION.getValue()).append(">\n");
                     }
-                    xml.append("\t\t\t</").append(RESERVATION.getValue()).append(">\n");
+                    xml.append("\t\t</").append(RESERVATIONS.getValue()).append(">\n");
                 }
-                xml.append("\t\t</").append(RESERVATIONS.getValue()).append(">\n");
             }
 
             xml.append("\t</").append(ROOM.getValue()).append(">\n");
@@ -97,6 +97,7 @@ public enum XmlStructure {
         xml.append("</").append(HOTEL.getValue()).append(">");
         return xml.toString();
     }
+    //checkin 1 2024-10-10 2024-10-20 note family0
 
     public static String fetchXmlData() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(FileManager.getFile()));

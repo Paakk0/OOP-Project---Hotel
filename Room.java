@@ -7,14 +7,12 @@ import java.util.List;
 public class Room {
     private int number, numberOfBeds;
     private String note;
-    private List<Event> events;
     private List<Reservation> reservations;
 
     public Room(int number, int numberOfBeds, String note) {
         this.number = number;
         this.numberOfBeds = numberOfBeds;
         this.note = note;
-        this.events = new ArrayList<>();
         this.reservations = new ArrayList<>();
     }
 
@@ -37,22 +35,6 @@ public class Room {
 
     public void removeReservation(Reservation r) {
         this.reservations.remove(r);
-    }
-
-    public List<Event> getEvents() {
-        return events;
-    }
-
-    public void setEvents(List<Event> events) {
-        this.events = events;
-    }
-
-    public void addEvent(Event e) {
-        events.add(e);
-    }
-
-    public void removeEvent(Event e) {
-        events.remove(e);
     }
 
     public int getNumber() {

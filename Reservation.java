@@ -8,11 +8,17 @@ public class Reservation {
     private LocalDate from, to;
     private List<Guest> guests;
 
-    public Reservation(LocalDate from, LocalDate to,String identity,int numberOfGuests) {
+    public Reservation(LocalDate from, LocalDate to, String identity, int numberOfGuests) {
         this.from = from;
         this.to = to;
-        this.guests =new ArrayList<>();
-        addGuest(new Guest(identity,numberOfGuests));
+        this.guests = new ArrayList<>();
+        addGuest(new Guest(identity, numberOfGuests));
+    }
+
+    public Reservation(LocalDate from, LocalDate to, List<Guest> g) {
+        this.from = from;
+        this.to = to;
+        this.guests = g;
     }
 
 
@@ -24,11 +30,11 @@ public class Reservation {
         return to;
     }
 
-    public void addGuest(Guest g){
+    public void addGuest(Guest g) {
         this.guests.add(g);
     }
 
-    public void removeGuest(Guest g){
+    public void removeGuest(Guest g) {
         this.guests.remove(g);
     }
 
