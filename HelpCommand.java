@@ -4,11 +4,19 @@ import UI.ColorCode;
 
 import java.util.List;
 
+/**
+ * Command implementation for displaying help information about supported commands.
+ */
 public class HelpCommand extends Command {
+
+    /**
+     * Executes the command to display help information.
+     *
+     * @param args The list of arguments for the command (expects no arguments).
+     */
     @Override
     public void Command(List<String> args) {
         if (args.size() == 0) {
-            // Print command information
             System.out.println(ColorCode.SUGGEST.getCode() +
                     "The following commands are supported:\n" +
                     "open <file>    \topens <file>\n" +

@@ -6,7 +6,16 @@ import UI.ColorCode;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Command implementation for finding available rooms within a specified date range and number of beds.
+ */
 public class FindCommand extends Command {
+
+    /**
+     * Executes the command to find available rooms based on specified criteria.
+     *
+     * @param args The list of arguments for the command (expects 3 arguments: beds, dateFrom, dateTo).
+     */
     @Override
     public void Command(List<String> args) {
         if (args.size() == 3) {

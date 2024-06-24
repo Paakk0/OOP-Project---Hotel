@@ -8,7 +8,16 @@ import UI.ColorCode;
 
 import java.util.List;
 
+/**
+ * Command implementation for enrolling a guest in an event for a specific room reservation.
+ */
 public class EnrollCommand extends Command {
+
+    /**
+     * Executes the command to enroll a guest in an event for a specific room reservation.
+     *
+     * @param args The list of arguments for the command (expects 3 arguments: room number, event ID, guest identity).
+     */
     @Override
     public void Command(List<String> args) {
         if (args.size() == 3) {

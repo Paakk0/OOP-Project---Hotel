@@ -5,11 +5,20 @@ import UI.ColorCode;
 
 import java.util.List;
 
+/**
+ * Command implementation for saving hotel data to a new file.
+ */
 public class SaveAsCommand extends Command {
+
+    /**
+     * Executes the save-as command to save hotel data to a new file.
+     *
+     * @param args The list of arguments for the save-as command (expects exactly 1 argument: the new filename).
+     */
     @Override
     public void Command(List<String> args) {
         if (args.size() != 1) {
-            System.out.println(ColorCode.ERROR.getCode() +"This command requires exactly 1 argument (the filename)!");
+            System.out.println(ColorCode.ERROR.getCode() + "This command requires exactly 1 argument (the filename)!");
             return;
         }
 

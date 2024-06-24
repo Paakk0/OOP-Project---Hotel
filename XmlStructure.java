@@ -3,11 +3,14 @@ package Files;
 import Model.*;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Enum representing XML structure elements and providing methods to generate XML structure
+ * and fetch XML data from a file.
+ */
 public enum XmlStructure {
     HOTEL("Hotel"),
     ROOM("Room"),
@@ -27,14 +30,29 @@ public enum XmlStructure {
 
     private final String value;
 
+    /**
+     * Constructor for XmlStructure enum.
+     *
+     * @param value The string value associated with the enum constant.
+     */
     XmlStructure(String value) {
         this.value = value;
     }
 
+    /**
+     * Getter for the string value associated with the enum constant.
+     *
+     * @return The string value of the enum constant.
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * Generates an XML structure representing the current state of the hotel, rooms, reservations, and guests.
+     *
+     * @return A string containing the XML structure.
+     */
     public static String createXmlStructure() {
         StringBuilder xml = new StringBuilder();
         xml.append("<").append(HOTEL.getValue()).append(">\n");
@@ -97,8 +115,13 @@ public enum XmlStructure {
         xml.append("</").append(HOTEL.getValue()).append(">");
         return xml.toString();
     }
-    //checkin 1 2024-10-10 2024-10-20 note family0
 
+    /**
+     * Fetches XML data from a file specified by {@link FileManager}.
+     *
+     * @return A string containing the fetched XML data.
+     * @throws IOException If an I/O error occurs while reading the file.
+     */
     public static String fetchXmlData() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(FileManager.getFile()));
         StringBuilder xmlData = new StringBuilder();
